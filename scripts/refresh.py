@@ -29,7 +29,8 @@ WARN_FILE = ROOT / 'refresh-warnings.txt'
 WA_FEED = 'https://workaholics-anonymous.org/wp-content/meetings/sfdc_transformed_json_n8n_no_unscheduled_FINAL.json'
 WA_PAGE = 'https://workaholics-anonymous.org/meetings/'
 UA_ICS = 'https://calendar.google.com/calendar/ical/underearnersanonymouscalendar%40gmail.com/public/basic.ics'
-DA_SEARCH = 'https://debtorsanonymous.org/meeting-search-virtual/'
+# The bare search URL is a redirect page; asking for a time zone returns the full table.
+DA_SEARCH = 'https://debtorsanonymous.org/meeting-search-virtual/?mytimezone=America%2FNew_York'
 DA_DETAIL = 'https://debtorsanonymous.org/meeting-search-detail/?mid={mid}&src=share'
 
 UA_TZ = 'America/New_York'
@@ -64,7 +65,7 @@ def text_of(fragment):
     s = re.sub(r'(?is)<(script|style)\b.*?</\1>', ' ', fragment)
     s = re.sub(r'(?i)<br\s*/?>|</(p|div|li|h\d|tr|td)>', ' | ', s)
     s = re.sub(r'<[^>]+>', ' ', s)
-    s = html.unescape(s).replace('#x28;', '(').replace('#x29;', ')')
+    s = html.unescape(html.unescape(s)).replace('#x28;', '(').replace('#x29;', ')')
     return re.sub(r'\s+', ' ', s).strip()
 
 
