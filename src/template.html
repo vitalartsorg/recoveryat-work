@@ -152,6 +152,7 @@ main { padding-block: 8px 40px; }
 .star[aria-pressed="true"] { color: var(--star); }
 .star svg { width: 20px; height: 20px; }
 .empty { text-align: center; padding: 40px 16px; color: var(--muted); background: var(--surface); border: 1px dashed var(--line); border-radius: 14px; margin-top: 18px; }
+.inprog { display: flex; margin-top: 16px; }
 .more { display: flex; justify-content: center; margin-top: 18px; }
 footer { border-top: 1px solid var(--line); padding-block: 22px 40px; color: var(--muted); font-size: 13px; }
 footer p { margin: 0 0 8px; max-width: 70ch; }
@@ -258,6 +259,7 @@ const PLATS = [
 const COMMUNITY = ['Women', 'Men', 'LGBTQ+', 'BIPOC', 'Business'];
 const FORMATS = ['Beginners', 'Step Study', 'Literature', 'Speaker', 'Meditation', 'Writing', 'Visions', 'Closed'];
 const PAGE = 120;
+const JUST_STARTED_MS = 10 * 60000;
 
 /* ---------- storage (per-viewer convenience only) ---------- */
 const store = {
@@ -528,9 +530,22 @@ function render() {
 
   let html = '';
   let shown = 0;
-  if (live.length) {
-    html += `<section class="day now"><h2>Happening now <span>${live.length} in progress</span></h2><div class="rows">`;
-    for (const o of live) { if (shown >= state.shown) break; html += rowHtml(o, now); shown++; }
+  // Lead with what you can still catch: meetings that started in the last 10 minutes, then upcoming ones.
+  // Meetings that have been going longer sit behind a button.
+  const justStarted = live.filter(o => now - o.s <= JUST_STARTED_MS);
+  const earlier = live.filter(o => now - o.s > JUST_STARTED_MS);
+  const showEarlier = state.showLive || state.ready;
+  if (earlier.length) {
+    html += `<div class="inprog"><button class="btn" id="liveBtn" type="button" aria-expanded="${showEarlier}">${showEarlier ? 'Hide' : 'Show'} ${earlier.length} meeting${earlier.length === 1 ? '' : 's'} already in progress</button></div>`;
+    if (showEarlier) {
+      html += `<section class="day now"><h2>Already in progress <span>started more than 10 minutes ago</span></h2><div class="rows">`;
+      for (const o of earlier) html += rowHtml(o, now);
+      html += '</div></section>';
+    }
+  }
+  if (justStarted.length) {
+    html += `<section class="day now"><h2>Just started <span>${justStarted.length} in the last 10 minutes</span></h2><div class="rows">`;
+    for (const o of justStarted) { html += rowHtml(o, now); shown++; }
     html += '</div></section>';
   }
   let curKey = '';
@@ -581,6 +596,7 @@ document.addEventListener('click', e => {
     return;
   }
   if (e.target.id === 'moreBtn') { state.shown += PAGE; render(); }
+  if (e.target.id === 'liveBtn') { state.showLive = !state.showLive; render(); }
 });
 function selectText(el) { try { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } catch (e) {} }
 
