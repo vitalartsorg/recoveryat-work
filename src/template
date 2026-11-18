@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>html{color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>recoveryat.work</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Find online Workaholics Anonymous, Underearners Anonymous and Debtors Anonymous meetings, shown in your own time zone.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: a timetable ledger — sticky search band, then day sections whose rows put local time in a left column like entries in a book. */
+:root {
+  --bg: #f6f7f4;
+  --surface: #ffffff;
+  --surface-2: #eef0ea;
+  --line: #dde1d6;
+  --fg: #1d2420;
+  --muted: #5c665f;
+  --accent: #2f6b55;
+  --accent-ink: #ffffff;
+  --accent-soft: #dcebe3;
+  --wa: #b4621b;  --wa-soft: #f6e6d6;
+  --ua: #1f7a7f;  --ua-soft: #d8eeee;
+  --da: #4b4fa6;  --da-soft: #e3e3f5;
+  --live: #c2410c; --live-soft: #fde7da;
+  --star: #c48a12;
+  --shadow: 0 1px 2px rgba(29,36,32,.06), 0 4px 16px rgba(29,36,32,.05);
+  --font-display: "Bricolage Grotesque", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121614; --surface: #1a201d; --surface-2: #222a26; --line: #2f3833;
+    --fg: #e7ece8; --muted: #9aa69f; --accent: #7cc3a5; --accent-ink: #0f1a15; --accent-soft: #23352d;
+    --wa: #f0a35e; --wa-soft: #3a2b1d; --ua: #6cc9cd; --ua-soft: #1c3434; --da: #a5a9f2; --da-soft: #272943;
+    --live: #ff9a62; --live-soft: #3d2519; --star: #f2c14e;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121614; --surface: #1a201d; --surface-2: #222a26; --line: #2f3833;
+  --fg: #e7ece8; --muted: #9aa69f; --accent: #7cc3a5; --accent-ink: #0f1a15; --accent-soft: #23352d;
+  --wa: #f0a35e; --wa-soft: #3a2b1d; --ua: #6cc9cd; --ua-soft: #1c3434; --da: #a5a9f2; --da-soft: #272943;
+  --live: #ff9a62; --live-soft: #3d2519; --star: #f2c14e;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 920px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+a { color: inherit; }
+button, select, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* header */
+header.top { padding-block: 28px 14px; display: flex; gap: 16px; align-items: flex-start; justify-content: space-between; }
+.brand { min-width: 0; }
+.brand h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 5vw, 40px); line-height: 1.05; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+.brand h1 .amp { color: var(--accent); }
+.brand p { margin: 6px 0 0; color: var(--muted); max-width: 52ch; }
+.top-actions { display: flex; gap: 8px; }
+.icon-btn { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; cursor: pointer; }
+.icon-btn:hover { background: var(--surface-2); }
+.icon-btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.icon-btn svg { width: 20px; height: 20px; }
+
+/* fellowship cards */
+.fellowships { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+.fcard { text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 10px 12px; cursor: pointer; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.fcard .abbr { font-family: var(--font-mono); font-weight: 600; font-size: 13px; letter-spacing: .04em; }
+.fcard .full { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fcard .count { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.fcard[data-f="WA"] .abbr { color: var(--wa); } .fcard[data-f="UA"] .abbr { color: var(--ua); } .fcard[data-f="DA"] .abbr { color: var(--da); }
+.fcard[aria-pressed="true"][data-f="WA"] { background: var(--wa-soft); border-color: var(--wa); }
+.fcard[aria-pressed="true"][data-f="UA"] { background: var(--ua-soft); border-color: var(--ua); }
+.fcard[aria-pressed="true"][data-f="DA"] { background: var(--da-soft); border-color: var(--da); }
+
+/* sticky search band */
+.band { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 10px; border-bottom: 1px solid var(--line); }
+.searchrow { display: flex; gap: 8px; align-items: center; }
+.search { flex: 1; min-width: 0; position: relative; }
+.search input { width: 100%; height: 42px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); padding: 0 12px 0 38px; }
+.search svg { position: absolute; left: 12px; top: 11px; width: 18px; height: 18px; color: var(--muted); }
+.toggle { display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; white-space: nowrap; font-size: 14px; }
+.toggle[aria-pressed="true"] { background: var(--live-soft); border-color: var(--live); color: var(--live); }
+.toggle .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.filter-btn { position: relative; }
+.filter-btn .badge { position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; border-radius: 9px; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 600; display: grid; place-items: center; padding: 0 5px; }
+.meta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-top: 8px; font-size: 13px; color: var(--muted); }
+.meta select { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; height: 30px; padding: 0 6px; max-width: 220px; }
+.meta .tzline { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.clear { border: 0; background: none; color: var(--accent); cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 2px; }
+
+/* filter panel */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-top: 10px; display: grid; gap: 14px; box-shadow: var(--shadow); max-height: 60vh; overflow: auto; }
+.group h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 6px; font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 11px; font-size: 13px; cursor: pointer; }
+.chip:hover { background: var(--surface-2); }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.chip small { opacity: .75; margin-left: 4px; font-size: 11px; }
+.panel select { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; height: 34px; padding: 0 8px; }
+
+/* list */
+main { padding-block: 8px 40px; }
+.day { margin-top: 18px; }
+.day h2 { font-family: var(--font-display); font-weight: 700; font-size: 20px; margin: 0 0 8px; display: flex; gap: 10px; align-items: baseline; }
+.day h2 span { font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--muted); }
+.day.now h2 { color: var(--live); }
+.rows { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.row { display: grid; grid-template-columns: 92px minmax(0, 1fr) auto; gap: 14px; padding: 12px 14px; border-top: 1px solid var(--line); align-items: start; }
+.row:first-child { border-top: 0; }
+.time { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 600; font-size: 15px; line-height: 1.25; }
+.time .end { display: block; font-weight: 500; font-size: 12px; color: var(--muted); }
+.time .rel { display: block; font-family: var(--font-body); font-size: 12px; font-weight: 600; color: var(--live); margin-top: 3px; }
+.body { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.titleline { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.fbadge { font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: .04em; padding: 1px 6px; border-radius: 5px; flex: none; }
+.fbadge.WA { background: var(--wa-soft); color: var(--wa); } .fbadge.UA { background: var(--ua-soft); color: var(--ua); } .fbadge.DA { background: var(--da-soft); color: var(--da); }
+.name { font-weight: 600; font-size: 15px; overflow-wrap: anywhere; }
+.sub { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.tag { font-size: 11.5px; padding: 1px 7px; border-radius: 999px; background: var(--surface-2); color: var(--muted); }
+.tag.warn { background: var(--live-soft); color: var(--live); }
+.creds { font-size: 13px; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.creds code { font-family: var(--font-mono); font-size: 12.5px; background: var(--surface-2); padding: 1px 6px; border-radius: 5px; }
+.dial a { color: inherit; text-decoration: none; }
+.dial a:hover code { text-decoration: underline; }
+.note { font-size: 12.5px; color: var(--muted); max-width: 62ch; }
+.copy { border: 0; background: none; color: var(--accent); cursor: pointer; font-size: 12px; padding: 0 2px; }
+.actions { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 34px; padding: 0 12px; border-radius: 9px; font-size: 13px; font-weight: 600; text-decoration: none; border: 1px solid var(--line); background: var(--surface); white-space: nowrap; cursor: pointer; }
+.btn:hover { background: var(--surface-2); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.06); }
+.cal { position: relative; }
+.cal summary { list-style: none; }
+.cal summary::-webkit-details-marker { display: none; }
+.calmenu { position: absolute; right: 0; top: calc(100% + 4px); z-index: 4; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 4px; display: flex; flex-direction: column; min-width: 270px; }
+.calmenu a { white-space: nowrap; }
+.calmenu a { padding: 8px 10px; border-radius: 7px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; justify-content: space-between; gap: 10px; }
+.calmenu a:hover { background: var(--surface-2); }
+.calmenu small { color: var(--muted); font-weight: 400; }
+.star { border: 0; background: none; cursor: pointer; padding: 4px; color: var(--muted); align-self: flex-end; }
+.star[aria-pressed="true"] { color: var(--star); }
+.star svg { width: 20px; height: 20px; }
+.empty { text-align: center; padding: 40px 16px; color: var(--muted); background: var(--surface); border: 1px dashed var(--line); border-radius: 14px; margin-top: 18px; }
+.inprog { display: flex; margin-top: 16px; }
+.more { display: flex; justify-content: center; margin-top: 18px; }
+footer { border-top: 1px solid var(--line); padding-block: 22px 40px; color: var(--muted); font-size: 13px; }
+footer p { margin: 0 0 8px; max-width: 70ch; }
+footer a { color: var(--accent); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (max-width: 640px) {
+  .calmenu { left: 0; right: auto; }
+  .fellowships { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .fcard .full { display: none; }
+  .row { grid-template-columns: 70px minmax(0, 1fr); gap: 10px; }
+  .actions { grid-column: 2; flex-direction: row; flex-wrap: wrap; align-items: center; }
+  .star { align-self: center; margin-left: auto; }
+  .toggle .label-long { display: none; }
+  .time { font-size: 14px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .row { transition: background .15s; }
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>recoveryat<span class="amp">.work</span></h1>
+      <p>Online meetings of Workaholics, Underearners and Debtors Anonymous, shown in your time zone.</p>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" id="favOnly" aria-pressed="false" title="Show favorites only" aria-label="Show favorites only">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>
+      </button>
+      <button class="icon-btn" id="themeBtn" title="Switch theme" aria-label="Switch between light and dark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="fellowships" id="fellowships" role="group" aria-label="Fellowship"></div>
+</div>
+
+<div class="band">
+  <div class="wrap">
+    <div class="searchrow">
+      <label class="search" for="q">
+        <span class="sr">Search meetings</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Search name, place or group #" autocomplete="off">
+      </label>
+      <button class="toggle" id="ready" aria-pressed="false" title="In progress or starting within 30 minutes"><span class="dot"></span><span>Join now<span class="label-long"> or soon</span></span></button>
+      <button class="toggle filter-btn" id="filterBtn" aria-expanded="false" aria-controls="panel">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+        <span class="label-long">Filters</span><span class="badge" id="fcount" hidden></span>
+      </button>
+    </div>
+    <div class="panel" id="panel" hidden>
+      <div class="group"><h3>Day</h3><div class="chips" id="cDays"></div></div>
+      <div class="group"><h3>Time of day (your time)</h3><div class="chips" id="cTimes"></div></div>
+      <div class="group"><h3>How to join</h3><div class="chips" id="cPlat"></div></div>
+      <div class="group"><h3>Community</h3><div class="chips" id="cComm"></div></div>
+      <div class="group"><h3>Format</h3><div class="chips" id="cFmt"></div></div>
+      <div class="group"><h3>Language</h3><select id="lang" aria-label="Language"></select></div>
+    </div>
+    <div class="meta">
+      <span id="summary" aria-live="polite"></span>
+      <span class="tzline"><label for="tz">Times in</label><select id="tz"></select><button class="clear" id="clearAll" hidden>Clear filters</button></span>
+    </div>
+  </div>
+</div>
+
+<main class="wrap" id="list"></main>
+
+<footer class="wrap">
+  <p><strong>An independent listing.</strong> This page is not run by or affiliated with Workaholics Anonymous, Underearners Anonymous or Debtors Anonymous. Meeting details come from each fellowship's public directory, last updated __UPDATED__. Groups change times and links often, so check the fellowship's own listing if something doesn't work.</p>
+  <p>Sources: <a href="https://workaholics-anonymous.org/meetings" target="_blank" rel="noopener">WA Meeting Finder</a> · <a href="https://underearnersanonymous.org/meetings-underearners-anonymous/" target="_blank" rel="noopener">UA Phone &amp; Video Meetings</a> · <a href="https://debtorsanonymous.org/?p=177280" target="_blank" rel="noopener">DA Virtual Meeting Search</a> (includes Business Debtors Anonymous). Phone numbers, meeting IDs and passcodes are copied from those listings. Where a group only shares its link by email, the row says so.</p>
+  <p>Meeting-type labels are inferred from meeting names. Favorites are saved only in this browser.</p>
+</footer>
+
+<script>
+const MEETINGS = /*__MEETINGS__*/[];
+
+const FELLOWSHIPS = {
+  WA: { full: 'Workaholics Anonymous', short: 'Workaholics' },
+  UA: { full: 'Underearners Anonymous', short: 'Underearners' },
+  DA: { full: 'Debtors Anonymous', short: 'Debtors' },
+};
+const SOURCES = {
+  WA: 'https://workaholics-anonymous.org/meetings/',
+  UA: 'https://underearnersanonymous.org/meetings-underearners-anonymous/',
+  DA: 'https://debtorsanonymous.org/?p=177280',
+};
+const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const TIMES = [
+  { id: 'morning', label: 'Morning', hint: '5am–12pm', test: h => h >= 5 && h < 12 },
+  { id: 'afternoon', label: 'Afternoon', hint: '12–5pm', test: h => h >= 12 && h < 17 },
+  { id: 'evening', label: 'Evening', hint: '5–9pm', test: h => h >= 17 && h < 21 },
+  { id: 'night', label: 'Night', hint: '9pm–5am', test: h => h >= 21 || h < 5 },
+];
+const PLATS = [
+  { id: 'video', label: 'Video', test: m => m.p !== 'Phone' },
+  { id: 'phone', label: 'Phone / call-in', test: m => m.p === 'Phone' || m.ph },
+];
+const COMMUNITY = ['Women', 'Men', 'LGBTQ+', 'BIPOC', 'Business'];
+const FORMATS = ['Beginners', 'Step Study', 'Literature', 'Speaker', 'Meditation', 'Writing', 'Visions', 'Closed'];
+const PAGE = 120;
+const JUST_STARTED_MS = 10 * 60000;
+
+/* ---------- storage (per-viewer convenience only) ---------- */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+};
+
+/* ---------- time zone math ---------- */
+const dtfCache = {};
+function partsIn(ms, tz) {
+  const f = dtfCache[tz] || (dtfCache[tz] = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric',
+    hour: 'numeric', minute: 'numeric', second: 'numeric', weekday: 'short' }));
+  const o = {};
+  for (const p of f.formatToParts(new Date(ms))) o[p.type] = p.value;
+  return { y: +o.year, mo: +o.month, d: +o.day, h: +o.hour % 24, mi: +o.minute, s: +o.second, wd: DAY_NAMES.indexOf(o.weekday) };
+}
+function offsetMs(ms, tz) {
+  const p = partsIn(ms, tz);
+  return Date.UTC(p.y, p.mo - 1, p.d, p.h, p.mi, p.s) - Math.floor(ms / 1000) * 1000;
+}
+function zonedToUtc(y, mo, d, minutes, tz) {
+  const guess = Date.UTC(y, mo - 1, d, 0, minutes);
+  let t = guess - offsetMs(guess, tz);
+  const t2 = guess - offsetMs(t, tz);
+  return t2 !== t ? t2 : t;
+}
+const toMin = s => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
+
+function occurrences(now, horizonDays) {
+  const out = [];
+  const limit = now + horizonDays * 864e5;
+  const todayBySrc = {};
+  MEETINGS.forEach((m, idx) => {
+    const src = todayBySrc[m.z] || (todayBySrc[m.z] = partsIn(now, m.z));
+    const start = toMin(m.t);
+    let dur = m.e ? (toMin(m.e) - start + 1440) % 1440 : 60;
+    if (!dur) dur = 60;
+    for (const day of m.d) {
+      for (let k = -1; k <= horizonDays; k++) {
+        if ((src.wd + k + 70) % 7 !== day) continue;
+        const civil = new Date(Date.UTC(src.y, src.mo - 1, src.d + k));
+        const s = zonedToUtc(civil.getUTCFullYear(), civil.getUTCMonth() + 1, civil.getUTCDate(), start, m.z);
+        const e = s + dur * 60000;
+        if (e > now && s < limit) out.push({ m, idx, s, e });
+      }
+    }
+  });
+  out.sort((a, b) => a.s - b.s || a.m.n.localeCompare(b.m.n));
+  return out;
+}
+
+/* ---------- state ---------- */
+const deviceTz = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; } catch (e) { return 'UTC'; } })();
+const state = {
+  q: '', f: new Set(), days: new Set(), times: new Set(), plat: new Set(), comm: new Set(), fmt: new Set(),
+  lang: '', ready: false, favOnly: false, shown: PAGE,
+  tz: store.get('tmm.tz', '') || deviceTz,
+  favs: new Set(store.get('tmm.favs', [])),
+};
+const keyOf = m => [m.f, m.n, m.t, m.z, m.d.join('')].join('|');
+
+/* ---------- build controls ---------- */
+const $ = id => document.getElementById(id);
+function chip(container, label, pressed, onClick, hint) {
+  const b = document.createElement('button');
+  b.className = 'chip'; b.type = 'button';
+  b.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+  b.textContent = label;
+  if (hint) { const s = document.createElement('small'); s.textContent = hint; b.appendChild(s); }
+  b.addEventListener('click', () => { onClick(); b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); });
+  container.appendChild(b);
+  return b;
+}
+function toggleIn(set, v) { set.has(v) ? set.delete(v) : set.add(v); state.shown = PAGE; render(); }
+
+function buildControls() {
+  const fc = $('fellowships');
+  const counts = { WA: 0, UA: 0, DA: 0 };
+  MEETINGS.forEach(m => counts[m.f] += m.d.length);
+  for (const f of ['WA', 'UA', 'DA']) {
+    const b = document.createElement('button');
+    b.className = 'fcard'; b.type = 'button'; b.dataset.f = f;
+    b.setAttribute('aria-pressed', 'false');
+    b.innerHTML = `<span class="abbr">${f}</span><span class="full">${FELLOWSHIPS[f].full}</span><span class="count">${counts[f]} meetings a week</span>`;
+    b.addEventListener('click', () => { toggleIn(state.f, f); b.setAttribute('aria-pressed', state.f.has(f)); });
+    fc.appendChild(b);
+  }
+  DAY_NAMES.forEach((d, i) => chip($('cDays'), d, false, () => toggleIn(state.days, i)));
+  TIMES.forEach(t => chip($('cTimes'), t.label, false, () => toggleIn(state.times, t.id), t.hint));
+  PLATS.forEach(p => chip($('cPlat'), p.label, false, () => toggleIn(state.plat, p.id)));
+  COMMUNITY.forEach(c => chip($('cComm'), c, false, () => toggleIn(state.comm, c)));
+  FORMATS.forEach(c => chip($('cFmt'), c, false, () => toggleIn(state.fmt, c)));
+
+  const langs = {};
+  MEETINGS.forEach(m => langs[m.l] = (langs[m.l] || 0) + m.d.length);
+  const ls = $('lang');
+  ls.innerHTML = '<option value="">Any language</option>' + Object.keys(langs).sort((a, b) => (b === 'English') - (a === 'English') || a.localeCompare(b))
+    .map(l => `<option value="${l}">${l} (${langs[l]})</option>`).join('');
+  ls.addEventListener('change', () => { state.lang = ls.value; state.shown = PAGE; render(); });
+
+  const tzs = new Set([deviceTz, state.tz, 'America/Los_Angeles', 'America/Denver', 'America/Chicago', 'America/New_York',
+    'America/Sao_Paulo', 'Europe/London', 'Europe/Paris', 'Europe/Moscow', 'Asia/Jerusalem', 'Asia/Kolkata', 'Asia/Tokyo',
+    'Australia/Sydney', 'Pacific/Auckland', 'UTC']);
+  const tzSel = $('tz');
+  tzSel.innerHTML = [...tzs].map(z => `<option value="${z}">${z.replace(/_/g, ' ')}${z === deviceTz ? ' (yours)' : ''}</option>`).join('');
+  tzSel.value = state.tz;
+  tzSel.addEventListener('change', () => { state.tz = tzSel.value; store.set('tmm.tz', state.tz === deviceTz ? '' : state.tz); render(); });
+
+  let qTimer;
+  $('q').addEventListener('input', e => { clearTimeout(qTimer); qTimer = setTimeout(() => { state.q = e.target.value.trim().toLowerCase(); state.shown = PAGE; render(); }, 120); });
+  $('ready').addEventListener('click', e => { state.ready = !state.ready; e.currentTarget.setAttribute('aria-pressed', state.ready); state.shown = PAGE; render(); });
+  $('favOnly').addEventListener('click', e => { state.favOnly = !state.favOnly; e.currentTarget.setAttribute('aria-pressed', state.favOnly); state.shown = PAGE; render(); });
+  $('filterBtn').addEventListener('click', e => { const p = $('panel'); p.hidden = !p.hidden; e.currentTarget.setAttribute('aria-expanded', !p.hidden); });
+  $('clearAll').addEventListener('click', () => {
+    ['f', 'days', 'times', 'plat', 'comm', 'fmt'].forEach(k => state[k].clear());
+    state.lang = ''; state.q = ''; state.ready = false; state.favOnly = false; state.shown = PAGE;
+    $('q').value = ''; $('lang').value = '';
+    document.querySelectorAll('[aria-pressed="true"]').forEach(b => { if (b.id !== 'themeBtn') b.setAttribute('aria-pressed', 'false'); });
+    render();
+  });
+
+  const themeBtn = $('themeBtn');
+  const saved = store.get('tmm.theme', '');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+  themeBtn.addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    store.set('tmm.theme', next);
+  });
+}
+
+/* ---------- filtering & rendering ---------- */
+function matches(o, lp) {
+  const m = o.m;
+  if (state.f.size && !state.f.has(m.f)) return false;
+  if (state.favOnly && !state.favs.has(keyOf(m))) return false;
+  if (state.lang && m.l !== state.lang) return false;
+  if (state.days.size && !state.days.has(lp.wd)) return false;
+  if (state.times.size && !TIMES.some(t => state.times.has(t.id) && t.test(lp.h))) return false;
+  if (state.plat.size && !PLATS.some(p => state.plat.has(p.id) && p.test(m))) return false;
+  for (const c of state.comm) if (!m.g.includes(c)) return false;
+  for (const c of state.fmt) if (!m.g.includes(c)) return false;
+  if (state.q) {
+    const hay = (m.n + ' ' + (m.loc || '') + ' ' + (m.grp || '') + ' ' + m.f + ' ' + FELLOWSHIPS[m.f].full + ' ' + (m.k || '') + ' ' + m.p + ' ' + m.l).toLowerCase();
+    if (!state.q.split(/\s+/).every(w => hay.includes(w))) return false;
+  }
+  return true;
+}
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function fmtTime(ms) {
+  return new Intl.DateTimeFormat('en-US', { timeZone: state.tz, hour: 'numeric', minute: '2-digit' }).format(new Date(ms)).replace(' ', ' ');
+}
+function relLabel(o, now) {
+  if (o.s <= now) { const mins = Math.round((now - o.s) / 60000); return mins < 1 ? 'Starting now' : `Started ${mins} min ago`; }
+  const mins = Math.round((o.s - now) / 60000);
+  if (mins <= 60) return `In ${mins} min`;
+  return '';
+}
+function detailsLink(m) {
+  if (m.f === 'WA') return { href: SOURCES.WA + '?meeting=' + encodeURIComponent(m.s), label: 'Details' };
+  if (m.f === 'DA') return { href: m.mid ? 'https://debtorsanonymous.org/meeting-search-detail/?mid=' + encodeURIComponent(m.mid) + '&src=share' : SOURCES.DA, label: 'Details' };
+  return { href: SOURCES.UA, label: 'UA calendar' };
+}
+
+function pad(n) { return String(n).padStart(2, '0'); }
+function stamp(p) { return `${p.y}${pad(p.mo)}${pad(p.d)}T${pad(p.h)}${pad(p.mi)}00`; }
+function calMenu(o, det) {
+  const m = o.m;
+  const title = `${m.f === 'DA' && m.k === 'BDA' ? 'BDA' : m.f}: ${m.n}`;
+  const lines = [FELLOWSHIPS[m.f].full + (m.k === 'BDA' ? ' (Business Debtors Anonymous)' : '') + ' meeting'];
+  if (m.zid) lines.push(`Join Zoom: https://zoom.us/j/${m.zid}`, `Meeting ID: ${m.zid}`);
+  if (m.pc) lines.push(`Passcode: ${m.pc}`);
+  if (m.tel) lines.push(`Call: ${m.tel}${m.code ? ' (' + m.code + ')' : ''}`);
+  if (m.note) lines.push(m.note);
+  if (m.grp) lines.push(`Group #${m.grp}`);
+  lines.push(`Details: ${det.href}`);
+  if (m.irr) lines.push('This meeting does not happen every week. Check the schedule.');
+  const body = lines.join('\n');
+  // Google: listed local time in the meeting's own zone, repeating weekly so daylight-saving changes follow the group.
+  const a = partsIn(o.s, m.z), b = partsIn(o.e, m.z);
+  const g = new URLSearchParams({ action: 'TEMPLATE', text: title, dates: `${stamp(a)}/${stamp(b)}`, ctz: m.z, details: body, location: m.zid ? `https://zoom.us/j/${m.zid}` : m.p });
+  if (!m.irr) g.set('recur', 'RRULE:FREQ=WEEKLY');
+  const ol = new URLSearchParams({ path: '/calendar/action/compose', rru: 'addevent', subject: title, startdt: new Date(o.s).toISOString(), enddt: new Date(o.e).toISOString(), body });
+  return `<details class="cal"><summary class="btn">Add to calendar</summary><div class="calmenu">
+    <a href="https://calendar.google.com/calendar/render?${g}" target="_blank" rel="noopener">Google Calendar${m.irr ? '' : ' <small>repeats weekly</small>'}</a>
+    <a href="https://outlook.live.com/calendar/0/deeplink/compose?${ol}" target="_blank" rel="noopener">Outlook.com <small>this date only</small></a>
+    <a href="https://outlook.office.com/calendar/0/deeplink/compose?${ol}" target="_blank" rel="noopener">Outlook (work or school) <small>this date only</small></a>
+  </div></details>`;
+}
+
+function fmtId(id) { const d = String(id).replace(/\D/g, ''); return d.length === 11 ? d.replace(/(\d{3})(\d{4})(\d{4})/, '$1 $2 $3') : d.length === 10 ? d.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3') : d.length === 9 ? d.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : d; }
+function rowHtml(o, now) {
+  const m = o.m;
+  const key = keyOf(m);
+  const fav = state.favs.has(key);
+  const rel = relLabel(o, now);
+  const tags = [];
+  if (m.f === 'DA' && m.k === 'BDA') tags.push('Business Debtors Anonymous');
+  m.g.filter(t => !(t === 'Business' && m.k === 'BDA')).forEach(t => tags.push(t));
+  if (m.l === 'Not listed') tags.unshift('Language not listed'); else if (m.l !== 'English') tags.unshift(m.l);
+  if (m.hy) tags.push('Also in person');
+  const warn = m.irr ? '<span class="tag warn">Not every week — check schedule</span>' : '';
+  const sub = [];
+  sub.push(esc(m.p) + (m.ph && m.p !== 'Phone' ? ' + phone' : ''));
+  if (m.loc) sub.push(esc(m.loc));
+  if (m.grp) sub.push('Group #' + esc(m.grp));
+  if (m.f === 'WA' || m.f === 'UA' || m.f === 'DA') sub.push(`<span title="Listed time">${esc(m.t)} ${esc(m.z.split('/').pop().replace(/_/g, ' '))}</span>`);
+  const credParts = [];
+  if (m.zid) credParts.push(`<span>Meeting ID <code>${esc(fmtId(m.zid))}</code></span>`);
+  if (m.pc) credParts.push(`<span>Passcode <code>${esc(m.pc)}</code> <button class="copy" type="button" data-copy="${esc(m.pc)}">Copy</button></span>`);
+  if (m.tel) credParts.push(`<span class="dial">Call <a href="tel:${esc(m.tel.replace(/[^\d+]/g, ''))}"><code>${esc(m.tel)}</code></a>${m.code ? ` · ${esc(m.code)}` : ''}</span>`);
+  else if (m.code) credParts.push(`<span>${esc(m.code)}</span>`);
+  let creds = credParts.length ? `<div class="creds">${credParts.join('')}</div>` : '';
+  if (m.note) creds += `<div class="note">${esc(m.note)}</div>`;
+  if (!credParts.length && !m.note) creds = `<div class="note">How to join is on ${m.f === 'UA' ? 'the UA calendar entry' : 'the group’s listing'} (tap ${m.f === 'UA' ? 'UA calendar' : 'Details'}).</div>`;
+  const det = detailsLink(m);
+  const join = m.zid ? `<a class="btn primary" href="https://zoom.us/j/${esc(m.zid)}" target="_blank" rel="noopener">Join Zoom</a>` : '';
+  return `<div class="row">
+    <div class="time">${fmtTime(o.s)}<span class="end">${o.m.e ? 'to ' + fmtTime(o.e) : 'about 1 hr'}</span>${rel ? `<span class="rel">${rel}</span>` : ''}</div>
+    <div class="body">
+      <div class="titleline"><span class="fbadge ${m.f}" title="${FELLOWSHIPS[m.f].full}">${m.f === 'DA' && m.k === 'BDA' ? 'BDA' : m.f}</span><span class="name">${esc(m.n)}</span></div>
+      <div class="sub">${sub.join('<span aria-hidden="true">·</span>')}</div>
+      ${creds}
+      ${tags.length || warn ? `<div class="tags">${warn}${tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>` : ''}
+    </div>
+    <div class="actions">
+      ${join}
+      <a class="btn" href="${esc(det.href)}" target="_blank" rel="noopener">${det.label}</a>
+      ${calMenu(o, det)}
+      <button class="star" type="button" data-fav="${esc(key)}" aria-pressed="${fav}" aria-label="${fav ? 'Remove from' : 'Add to'} favorites">
+        <svg viewBox="0 0 24 24" fill="${fav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>
+      </button>
+    </div>
+  </div>`;
+}
+
+function dayLabel(lp, nowP) {
+  const a = Date.UTC(lp.y, lp.mo - 1, lp.d), b = Date.UTC(nowP.y, nowP.mo - 1, nowP.d);
+  const diff = Math.round((a - b) / 864e5);
+  const full = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][lp.wd];
+  const date = new Date(a).toLocaleDateString('en-US', { timeZone: 'UTC', month: 'short', day: 'numeric' });
+  if (diff === 0) return ['Today', full + ', ' + date];
+  if (diff === 1) return ['Tomorrow', full + ', ' + date];
+  return [full, date];
+}
+
+function activeFilterCount() {
+  return state.days.size + state.times.size + state.plat.size + state.comm.size + state.fmt.size + (state.lang ? 1 : 0);
+}
+
+function render() {
+  const now = Date.now();
+  const occ = occurrences(now, 7);
+  const nowP = partsIn(now, state.tz);
+  const list = [];
+  for (const o of occ) {
+    const lp = partsIn(o.s, state.tz);
+    if (state.ready && !(o.s <= now + 30 * 60000)) continue;
+    if (!matches(o, lp)) continue;
+    o.lp = lp;
+    list.push(o);
+  }
+  const live = list.filter(o => o.s <= now);
+  const upcoming = list.filter(o => o.s > now);
+
+  let html = '';
+  let shown = 0;
+  // Lead with what you can still catch: meetings that started in the last 10 minutes, then upcoming ones.
+  // Meetings that have been going longer sit behind a button.
+  const justStarted = live.filter(o => now - o.s <= JUST_STARTED_MS);
+  const earlier = live.filter(o => now - o.s > JUST_STARTED_MS);
+  const showEarlier = state.showLive || state.ready;
+  if (earlier.length) {
+    html += `<div class="inprog"><button class="btn" id="liveBtn" type="button" aria-expanded="${showEarlier}">${showEarlier ? 'Hide' : 'Show'} ${earlier.length} meeting${earlier.length === 1 ? '' : 's'} already in progress</button></div>`;
+    if (showEarlier) {
+      html += `<section class="day now"><h2>Already in progress <span>started more than 10 minutes ago</span></h2><div class="rows">`;
+      for (const o of earlier) html += rowHtml(o, now);
+      html += '</div></section>';
+    }
+  }
+  if (justStarted.length) {
+    html += `<section class="day now"><h2>Just started <span>${justStarted.length} in the last 10 minutes</span></h2><div class="rows">`;
+    for (const o of justStarted) { html += rowHtml(o, now); shown++; }
+    html += '</div></section>';
+  }
+  let curKey = '';
+  for (const o of upcoming) {
+    if (shown >= state.shown) break;
+    const k = `${o.lp.y}-${o.lp.mo}-${o.lp.d}`;
+    if (k !== curKey) {
+      if (curKey) html += '</div></section>';
+      const [a, b] = dayLabel(o.lp, nowP);
+      html += `<section class="day"><h2>${a} <span>${b}</span></h2><div class="rows">`;
+      curKey = k;
+    }
+    html += rowHtml(o, now); shown++;
+  }
+  if (curKey) html += '</div></section>';
+  if (!list.length) {
+    html = `<div class="empty"><p><strong>No meetings match these filters.</strong></p><p>${state.favOnly ? 'Tap the star on any meeting to add it to your favorites.' : 'Try removing a filter or searching for something shorter.'}</p></div>`;
+  } else if (shown < list.length) {
+    html += `<div class="more"><button class="btn" id="moreBtn" type="button">Show more meetings (${list.length - shown} left this week)</button></div>`;
+  }
+  $('list').innerHTML = html;
+
+  const nf = activeFilterCount();
+  $('fcount').hidden = !nf; $('fcount').textContent = nf;
+  const anything = nf || state.f.size || state.q || state.ready || state.favOnly;
+  $('clearAll').hidden = !anything;
+  $('summary').textContent = state.ready
+    ? `${list.length} meeting${list.length === 1 ? '' : 's'} you can join now or within 30 minutes`
+    : `${list.length} meetings in the next 7 days`;
+}
+
+document.addEventListener('click', e => {
+  const fav = e.target.closest('[data-fav]');
+  if (fav) {
+    const k = fav.dataset.fav;
+    state.favs.has(k) ? state.favs.delete(k) : state.favs.add(k);
+    store.set('tmm.favs', [...state.favs]);
+    render();
+    return;
+  }
+  const cp = e.target.closest('[data-copy]');
+  if (cp) {
+    const txt = cp.dataset.copy;
+    const done = () => { cp.textContent = 'Copied'; setTimeout(() => cp.textContent = 'Copy', 1500); };
+    try {
+      navigator.clipboard.writeText(txt).then(done, () => { selectText(cp.previousElementSibling); });
+    } catch (err) { selectText(cp.previousElementSibling); }
+    return;
+  }
+  if (e.target.id === 'moreBtn') { state.shown += PAGE; render(); }
+  if (e.target.id === 'liveBtn') { state.showLive = !state.showLive; render(); }
+});
+function selectText(el) { try { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } catch (e) {} }
+
+buildControls();
+render();
+setInterval(() => { if (!document.querySelector('details.cal[open]')) render(); }, 60000);
+document.addEventListener('toggle', e => { if (e.target.matches && e.target.matches('details.cal') && e.target.open) document.querySelectorAll('details.cal[open]').forEach(d => { if (d !== e.target) d.open = false; }); }, true);
+document.addEventListener('click', e => { if (!e.target.closest('details.cal')) document.querySelectorAll('details.cal[open]').forEach(d => d.open = false); });
+</script>
+
+</body>
+</html>
