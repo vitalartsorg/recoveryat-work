@@ -1,0 +1,38 @@
+name: Weekly meeting refresh
+
+on:
+  schedule:
+    - cron: '23 9 * * 1'   # Mondays at 9:23 UTC (1:23 am Pacific)
+  workflow_dispatch:        # adds a "Run workflow" button for running it by hand
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Collect meetings and rebuild the page
+        run: python scripts/refresh.py
+
+      - name: Save the updated page
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html src/meetings.json
+          git diff --cached --quiet || git commit -m "Weekly meeting refresh"
+          git push
+
+      - name: Flag any source that was skipped
+        if: hashFiles('refresh-warnings.txt') != ''
+        run: |
+          echo "Some listings were kept from last week:"
+          cat refresh-warnings.txt
+          exit 1
